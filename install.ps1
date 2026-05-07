@@ -74,7 +74,7 @@ function Update-Profile {
 ###################################################################################################
 # Main Script
 ###################################################################################################
-if (-not $IsWindows) {
+if ([System.Environment]::OSVersion.Platform -ne [System.PlatformID]::Win32NT) {
     Write-ErrorAndExit "Error: This installer is intended for Windows PowerShell."
 }
 
