@@ -13,7 +13,7 @@
 ###################################################################################################
 # Functions
 ###################################################################################################
-function Parse-GitBranch {
+function Get-GitBranch {
     $branch = git branch --show-current 2>$null
     if ([string]::IsNullOrWhiteSpace($branch)) {
         return ""
