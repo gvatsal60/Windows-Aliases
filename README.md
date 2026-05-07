@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://img.shields.io/github/license/gvatsal60/Windows-Aliases)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/gvatsal60/Windows-Aliases/master.svg)](https://results.pre-commit.ci/latest/github/gvatsal60/Windows-Aliases/HEAD)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/18f54c1e09f84bff8ed81e7256357a2c)](https://app.codacy.com/gh/gvatsal60/Windows-Aliases/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/93a421b968b049839d8266e8ef94bd08)](https://app.codacy.com/gh/gvatsal60/Windows-Aliases/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![CodeFactor](https://www.codefactor.io/repository/github/gvatsal60/windows-aliases/badge)](https://www.codefactor.io/repository/github/gvatsal60/windows-aliases)
 ![GitHub pull-requests](https://img.shields.io/github/issues-pr/gvatsal60/Windows-Aliases)
 ![GitHub Issues](https://img.shields.io/github/issues/gvatsal60/Windows-Aliases)
