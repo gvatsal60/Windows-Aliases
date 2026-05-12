@@ -76,13 +76,15 @@ if (Test-Path -LiteralPath "$aliasPath") {
 "@
 
             Update-Profile -ProfileFilePath $profilePath -AliasFilePath $aliasPath -ProfileSnippet $profileSnippet
-            ([regex]::Matches((Get-Content -LiteralPath $profilePath -Raw), [regex]::Escape($profileSnippet))).Count | Should -Be 1
+            $firstProfileContents = Get-Content -LiteralPath $profilePath -Raw
+            $firstSnippetCount = ([regex]::Matches($firstProfileContents, [regex]::Escape($profileSnippet))).Count
+            $firstSnippetCount | Should -Be 1
 
             Update-Profile -ProfileFilePath $profilePath -AliasFilePath $aliasPath -ProfileSnippet $profileSnippet
 
-            $profileContents = Get-Content -LiteralPath $profilePath -Raw
-
-            ([regex]::Matches($profileContents, [regex]::Escape($profileSnippet))).Count | Should -Be 1
+            $secondProfileContents = Get-Content -LiteralPath $profilePath -Raw
+            $secondSnippetCount = ([regex]::Matches($secondProfileContents, [regex]::Escape($profileSnippet))).Count
+            $secondSnippetCount | Should -Be 1
         }
         finally {
             Remove-Item -LiteralPath $tempDir -Recurse -Force
