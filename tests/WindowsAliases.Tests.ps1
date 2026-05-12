@@ -33,19 +33,19 @@ Describe "Windows aliases" {
         $tempDir = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath ([System.Guid]::NewGuid().ToString())
         New-Item -ItemType Directory -Path $tempDir | Out-Null
 
-        $pushedLocation = $false
+        $locationPushed = $false
         try {
             git -C $tempDir init --quiet --initial-branch=main
             Set-Content -LiteralPath (Join-Path -Path $tempDir -ChildPath "sample.txt") -Value "content"
             Push-Location -LiteralPath $tempDir
-            $pushedLocation = $true
+            $locationPushed = $true
 
             $status = gts --short | Out-String
 
             $status | Should -Match "\?\? sample\.txt"
         }
         finally {
-            if ($pushedLocation) {
+            if ($locationPushed) {
                 Pop-Location
             }
             Remove-Item -LiteralPath $tempDir -Recurse -Force
