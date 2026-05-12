@@ -60,7 +60,7 @@ Describe "install.ps1" {
         }
     }
 
-    It "adds the profile source block only once" {
+    It "adds the profile source block to a new empty profile only once" {
         $tempDir = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath ([System.Guid]::NewGuid().ToString())
         New-Item -ItemType Directory -Path $tempDir | Out-Null
 
@@ -76,6 +76,8 @@ if (Test-Path -LiteralPath "$aliasPath") {
 "@
 
             Update-Profile -ProfileFilePath $profilePath -AliasFilePath $aliasPath -ProfileSnippet $profileSnippet
+            ([regex]::Matches((Get-Content -LiteralPath $profilePath -Raw), [regex]::Escape($profileSnippet))).Count | Should -Be 1
+
             Update-Profile -ProfileFilePath $profilePath -AliasFilePath $aliasPath -ProfileSnippet $profileSnippet
 
             $profileContents = Get-Content -LiteralPath $profilePath -Raw
