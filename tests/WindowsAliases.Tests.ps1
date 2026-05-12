@@ -33,17 +33,21 @@ Describe "Windows aliases" {
         $tempDir = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath ([System.Guid]::NewGuid().ToString())
         New-Item -ItemType Directory -Path $tempDir | Out-Null
 
+        $pushedLocation = $false
         try {
             git -C $tempDir init --quiet --initial-branch=main
             Set-Content -LiteralPath (Join-Path -Path $tempDir -ChildPath "sample.txt") -Value "content"
             Push-Location -LiteralPath $tempDir
+            $pushedLocation = $true
 
             $status = gts --short | Out-String
 
             $status | Should -Match "\?\? sample\.txt"
         }
         finally {
-            Pop-Location -ErrorAction SilentlyContinue
+            if ($pushedLocation) {
+                Pop-Location
+            }
             Remove-Item -LiteralPath $tempDir -Recurse -Force
         }
     }
@@ -51,12 +55,14 @@ Describe "Windows aliases" {
 
 Describe "install.ps1" {
     It "downloads the aliases file to the configured location" {
+        $destinationPath = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath ([System.Guid]::NewGuid().ToString())
+
         Mock Invoke-WebRequest {}
 
-        Download-AliasFile -DestinationPath "/tmp/.aliases.ps1" -SourceUrl "https://example.invalid/.aliases.ps1"
+        Download-AliasFile -DestinationPath $destinationPath -SourceUrl "https://example.invalid/.aliases.ps1"
 
         Should -Invoke Invoke-WebRequest -Times 1 -Exactly -ParameterFilter {
-            $Uri -eq "https://example.invalid/.aliases.ps1" -and $OutFile -eq "/tmp/.aliases.ps1"
+            $Uri -eq "https://example.invalid/.aliases.ps1" -and $OutFile -eq $destinationPath
         }
     }
 
