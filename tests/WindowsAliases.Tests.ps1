@@ -33,21 +33,20 @@ Describe "Windows aliases" {
         $tempDir = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath ([System.Guid]::NewGuid().ToString())
         New-Item -ItemType Directory -Path $tempDir | Out-Null
 
-        $locationPushed = $false
         try {
             git -C $tempDir init --quiet --initial-branch=main
             Set-Content -LiteralPath (Join-Path -Path $tempDir -ChildPath "sample.txt") -Value "content"
             Push-Location -LiteralPath $tempDir
-            $locationPushed = $true
+            try {
+                $status = gts --short | Out-String
 
-            $status = gts --short | Out-String
-
-            $status | Should -Match "\?\? sample\.txt"
-        }
-        finally {
-            if ($locationPushed) {
+                $status | Should -Match "\?\? sample\.txt"
+            }
+            finally {
                 Pop-Location
             }
+        }
+        finally {
             Remove-Item -LiteralPath $tempDir -Recurse -Force
         }
     }
@@ -83,14 +82,14 @@ if (Test-Path -LiteralPath "$aliasPath") {
 
             Update-Profile -ProfileFilePath $profilePath -AliasFilePath $aliasPath -ProfileSnippet $profileSnippet
             $firstProfileContents = Get-Content -LiteralPath $profilePath -Raw
-            $firstSnippetCount = ([regex]::Matches($firstProfileContents, [regex]::Escape($profileSnippet))).Count
-            $firstSnippetCount | Should -Be 1
+            $snippetCountAfterFirstUpdate = ([regex]::Matches($firstProfileContents, [regex]::Escape($profileSnippet))).Count
+            $snippetCountAfterFirstUpdate | Should -Be 1
 
             Update-Profile -ProfileFilePath $profilePath -AliasFilePath $aliasPath -ProfileSnippet $profileSnippet
 
             $secondProfileContents = Get-Content -LiteralPath $profilePath -Raw
-            $secondSnippetCount = ([regex]::Matches($secondProfileContents, [regex]::Escape($profileSnippet))).Count
-            $secondSnippetCount | Should -Be 1
+            $snippetCountAfterSecondUpdate = ([regex]::Matches($secondProfileContents, [regex]::Escape($profileSnippet))).Count
+            $snippetCountAfterSecondUpdate | Should -Be 1
         }
         finally {
             Remove-Item -LiteralPath $tempDir -Recurse -Force
