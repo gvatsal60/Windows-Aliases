@@ -69,7 +69,7 @@ function Update-Profile {
         New-Item -ItemType File -Path $ProfileFilePath -Force | Out-Null
     }
 
-    $profileContents = Get-Content -LiteralPath $ProfileFilePath -Raw
+    $profileContents = [string](Get-Content -LiteralPath $ProfileFilePath -Raw)
     if ($profileContents -notmatch [Regex]::Escape($AliasFilePath)) {
         Write-Info "=> Updating profile: $ProfileFilePath"
         Add-Content -LiteralPath $ProfileFilePath -Value $ProfileSnippet

@@ -36,12 +36,14 @@ Describe "Windows aliases" {
         try {
             git -C $tempDir init --quiet --initial-branch=main
             Set-Content -LiteralPath (Join-Path -Path $tempDir -ChildPath "sample.txt") -Value "content"
+            Push-Location -LiteralPath $tempDir
 
-            $status = gts -C $tempDir --short | Out-String
+            $status = gts --short | Out-String
 
             $status | Should -Match "\?\? sample\.txt"
         }
         finally {
+            Pop-Location -ErrorAction SilentlyContinue
             Remove-Item -LiteralPath $tempDir -Recurse -Force
         }
     }
@@ -49,12 +51,9 @@ Describe "Windows aliases" {
 
 Describe "install.ps1" {
     It "downloads the aliases file to the configured location" {
-        Set-Variable -Scope Script -Name FilePath -Value "/tmp/.aliases.ps1"
-        Set-Variable -Scope Script -Name AliasSourceUrl -Value "https://example.invalid/.aliases.ps1"
-
         Mock Invoke-WebRequest {}
 
-        Download-AliasFile
+        Download-AliasFile -DestinationPath "/tmp/.aliases.ps1" -SourceUrl "https://example.invalid/.aliases.ps1"
 
         Should -Invoke Invoke-WebRequest -Times 1 -Exactly -ParameterFilter {
             $Uri -eq "https://example.invalid/.aliases.ps1" -and $OutFile -eq "/tmp/.aliases.ps1"
@@ -68,10 +67,7 @@ Describe "install.ps1" {
         try {
             $aliasPath = Join-Path -Path $tempDir -ChildPath ".aliases.ps1"
             $profilePath = Join-Path -Path $tempDir -ChildPath "profile.ps1"
-
-            Set-Variable -Scope Script -Name FilePath -Value $aliasPath
-            Set-Variable -Scope Script -Name ProfilePath -Value $profilePath
-            Set-Variable -Scope Script -Name AliasSourceBlock -Value @"
+            $profileSnippet = @"
 
 # Common and useful aliases
 if (Test-Path -LiteralPath "$aliasPath") {
@@ -79,12 +75,12 @@ if (Test-Path -LiteralPath "$aliasPath") {
 }
 "@
 
-            Update-Profile
-            Update-Profile
+            Update-Profile -ProfileFilePath $profilePath -AliasFilePath $aliasPath -ProfileSnippet $profileSnippet
+            Update-Profile -ProfileFilePath $profilePath -AliasFilePath $aliasPath -ProfileSnippet $profileSnippet
 
             $profileContents = Get-Content -LiteralPath $profilePath -Raw
 
-            ([regex]::Matches($profileContents, [regex]::Escape($aliasPath))).Count | Should -Be 1
+            ([regex]::Matches($profileContents, [regex]::Escape($profileSnippet))).Count | Should -Be 1
         }
         finally {
             Remove-Item -LiteralPath $tempDir -Recurse -Force
