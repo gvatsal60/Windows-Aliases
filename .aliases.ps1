@@ -1,7 +1,6 @@
 ###################################################################################################
 # File: .aliases.ps1
 # Author: [Vatsal Gupta (gvatsal60)]
-# Date: 07-May-2026
 # Description: Common aliases and helper functions for Windows PowerShell.
 ###################################################################################################
 
