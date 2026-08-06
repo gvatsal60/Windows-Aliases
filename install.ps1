@@ -1,7 +1,6 @@
 ###################################################################################################
 # File: install.ps1
 # Author: [Vatsal Gupta (gvatsal60)]
-# Date: 07-May-2026
 # Description: Installs Windows aliases by downloading .aliases.ps1 and wiring it to $PROFILE.
 ###################################################################################################
 
